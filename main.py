@@ -22,10 +22,12 @@ Si ., le robot peut passer mais X cache .
 
 """
 
+from enum import Enum
 import constantes
 from utils.input_validators import is_valid_input
 from game.map_builder import Builder
 import os
+
 
 
 def render_interface(gmap):
@@ -33,24 +35,29 @@ def render_interface(gmap):
     print(gmap)
 
 
-def play_input_command(player_input):
+def play_input_command(player_input, gmap):
     if not is_valid_input(player_input):
         print(constantes.TXT_NOT_A_VALID_INPUT)
         return False
 
     dir = player_input[0]
     try:
-        nb_moves = player_input[1:]
+        nb_moves = int(player_input[1:])
     except Exception as e:
         print(f'[warning] try to move : {e}')
         raise NotImplementedError
 
-    try_to_move(dir, nb_moves)
+    try_to_move(gmap, dir, nb_moves)
     return True
 
 
-def try_to_move(dir, nb_moves):
-    print(f'try to move {dir}, {nb_moves}')
+def try_to_move(gmap, dir, nb_moves=1):
+    for move in range(1, nb_moves + 1):
+        if not gmap.is_tile_available(dir):
+            print(constantes.TEXT_NO_PATH_AVAILABLE)
+            return
+    for move in range(1, nb_moves + 1):
+        gmap.move_player(dir)
 
 
 def main():
@@ -59,8 +66,8 @@ def main():
     render_interface(gmap)
     while True:
         player_input = input(constantes.TXT_REQUEST_INPUT)
+        play_input_command(player_input, gmap)
         render_interface(gmap)
-        play_input_command(player_input)
 
 
 if __name__ == '__main__':

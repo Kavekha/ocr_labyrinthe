@@ -6,42 +6,7 @@ U = sortie
 X = Robot
 """
 
-from enum import Enum
-from itertools import product
-
-
-class TileType(Enum):
-    WALL = 0
-    DOOR = 1
-    EXIT = 2
-    ROBOT = 3
-    FLOOR = 4
-
-
-class Gmap:
-    TILE_RENDERING = {
-        TileType.WALL: '#',
-        TileType.DOOR: '+',
-        TileType.EXIT: 'U',
-        TileType.FLOOR: ' '
-    }
-
-    def __init__(self, width, height):
-        self.width = width
-        self.height = height
-        self.tiles = [None] * width * height
-        self.player_position = 0
-
-    def __repr__(self):
-        map_as_text = ""
-        for i, tile in enumerate(self.tiles):
-            if i % self.width == 0:
-                map_as_text += '\n'
-            if i != self.player_position:
-                map_as_text += Gmap.TILE_RENDERING.get(tile, '?')
-            else:
-                map_as_text += '@'
-        return map_as_text
+from game.gmap import TileType, Gmap
 
 
 class Builder:
@@ -83,7 +48,7 @@ class Builder:
                 tile = Builder.TILES_DEFINITION.get(char, TileType.WALL)
                 if tile == TileType.ROBOT:
                     self.gmap.player_position = i
-                    tile = TileType.WALL
+                    tile = TileType.FLOOR
                 self.gmap.tiles[i] = tile
                 i += 1
                 remaining_width -= 1
